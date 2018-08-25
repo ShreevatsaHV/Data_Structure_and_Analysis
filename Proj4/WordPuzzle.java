@@ -1,0 +1,779 @@
+package project4;
+
+import java.io.*;
+import java.math.BigInteger;
+import java.util.*;
+
+
+public class WordPuzzle {
+	static HashSet<String> llSet=new HashSet<>();
+	static HashSet<String> treeSet=new HashSet<>();
+	static HashSet<String> hashSet=new HashSet<>();
+	public static void main(String[] args) throws IOException {
+
+		Random r=new Random();
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter the number of rows : ");
+		int row=sc.nextInt();
+		System.out.println("Enter the number of columns : ");
+		int col=sc.nextInt();
+		sc.close();
+
+		char charTable[][]=new char[row][col];
+
+		// To generate grid of random characters
+
+		for (int i = 0; i < row; i++) {
+			for (int j = 0; j < col; j++) {
+				charTable[i][j]=(char)(r.nextInt(26)+'a');
+			}
+		}
+
+		// To display the grid of characters
+
+		//		for (int i = 0; i < charTable.length; i++) {
+		//			System.out.println(Arrays.toString(charTable[i]));
+		//		}	
+
+		String line = null;
+		String fileName = "C:/Users/Sreevatsa H V/Desktop/dictionary%281%29.txt";
+		LinkedList<String> Mylinked=new LinkedList<String>();
+		AvlTree<String> t = new AvlTree<>( );
+		MyHashTable hash=new MyHashTable();
+
+		int maxlength=0;
+
+		// Read the dictionary file and store the words in linked list, AVL tree and separate chaining hash table
+
+		try {
+			FileReader file=new FileReader(fileName);
+			BufferedReader bufferedReader = new BufferedReader(file);
+
+			while((line = bufferedReader.readLine()) != null) 
+			{
+				if(line.length()>maxlength)
+				{
+					maxlength=line.length();
+				}
+
+				Mylinked.add(line);	 
+				t.insert(line);			
+				hash.insert(line);
+			} 
+			bufferedReader.close(); 
+		}
+
+		catch (FileNotFoundException e){
+			e.printStackTrace();
+		}
+		//		System.out.println(maxlength);
+
+		//	 for linked list 
+
+		Long start = System.currentTimeMillis( );
+		for (int i = 0; i < charTable.length; i++) 
+		{
+			for (int j = 0; j < charTable[i].length; j++) {
+
+				StringBuilder sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal right
+				if(charTable[i].length<maxlength)
+					maxlength=charTable[i].length;
+
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+					if(j+j2+1<charTable[i].length)
+						sb.append(charTable[i][j+j2+1]);
+					else
+						break;
+
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(j-j2-1>=0)
+						sb.append(charTable[i][j-j2-1]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical upper
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0)
+						sb.append(charTable[i-j2-1][j]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical lower
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length)
+						sb.append(charTable[i+j2+1][j]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j-j2-1>=0 )
+						sb.append(charTable[i-j2-1][j-j2-1]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+						sb.append(charTable[i-j2-1][j+j2+1]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j-j2-1>=0 )
+						sb.append(charTable[i+j2+1][j-j2-1]);
+					else
+						break;
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+						sb.append(charTable[i+j2+1][j+j2+1]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+				}
+			}
+		}
+		Long end = System.currentTimeMillis( );
+		
+
+
+		// for trees
+
+		Long start1 = System.currentTimeMillis( );
+		for (int i = 0; i < charTable.length; i++) 
+		{
+			for (int j = 0; j < charTable[i].length; j++) {
+				//get the (i,j)character
+				StringBuilder sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal right
+				if(charTable[i].length<maxlength)
+					maxlength=charTable[i].length;
+
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+
+					if(j+j2+1<charTable[i].length)
+						sb.append(charTable[i][j+j2+1]);
+					else
+						break;
+
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(j-j2-1>=0)
+						sb.append(charTable[i][j-j2-1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical upper
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0)
+						sb.append(charTable[i-j2-1][j]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical lower
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length)
+						sb.append(charTable[i+j2+1][j]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j-j2-1>=0 )
+						sb.append(charTable[i-j2-1][j-j2-1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+						sb.append(charTable[i-j2-1][j+j2+1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j-j2-1>=0 )
+						sb.append(charTable[i+j2+1][j-j2-1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+						sb.append(charTable[i+j2+1][j+j2+1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+				}
+			}
+		}
+		Long end1 = System.currentTimeMillis( );
+		
+
+		// for hash table
+
+		Long start2 = System.currentTimeMillis( );
+		for (int i = 0; i < charTable.length; i++) 
+		{
+			for (int j = 0; j < charTable[i].length; j++) {
+				StringBuilder sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal right
+				if(charTable[i].length<maxlength)
+					maxlength=charTable[i].length;
+
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					ArrayList<String> list=hash.get(sb.toString());
+
+					if((list!=null && list.contains(sb.toString()))){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+					if(j+j2+1<charTable[i].length)
+						sb.append(charTable[i][j+j2+1]);
+					else
+						break;
+
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(j-j2-1>=0)
+						sb.append(charTable[i][j-j2-1]);
+					else
+						break;
+					ArrayList<String> list=hash.get(sb.toString());
+
+					if((list!=null && list.contains(sb.toString()))){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical upper
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0)
+						sb.append(charTable[i-j2-1][j]);
+					else
+						break;
+					ArrayList<String> list=hash.get(sb.toString());
+
+					if((list!=null && list.contains(sb.toString()))){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical lower
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length)
+						sb.append(charTable[i+j2+1][j]);
+					else
+						break;
+					ArrayList<String> list=hash.get(sb.toString());
+
+					if((list!=null && list.contains(sb.toString()))){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j-j2-1>=0 )
+						sb.append(charTable[i-j2-1][j-j2-1]);
+					else
+						break;
+					ArrayList<String> list=hash.get(sb.toString());
+
+					if((list!=null && list.contains(sb.toString()))){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+						sb.append(charTable[i-j2-1][j+j2+1]);
+					else
+						break;
+					ArrayList<String> list=hash.get(sb.toString());
+
+					if((list!=null && list.contains(sb.toString()))){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j-j2-1>=0 )
+						sb.append(charTable[i+j2+1][j-j2-1]);
+					else
+						break;
+					ArrayList<String> list=hash.get(sb.toString());
+
+					if((list!=null && list.contains(sb.toString()))){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+						sb.append(charTable[i+j2+1][j+j2+1]);
+					else
+						break;
+
+					ArrayList<String> list=hash.get(sb.toString());
+
+					if((list!=null && list.contains(sb.toString()))){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+				}
+			}
+		}
+		Long end2 = System.currentTimeMillis( );
+		
+		System.out.println( "Elapsed time for linked list: " + (end-start) );
+		System.out.println( "Elapsed time for tree structure is: " + (end1-start1) );
+		System.out.println( "Elapsed time for hash table is: " + (end2-start2) );
+		System.out.println();
+		
+		System.out.println("Number of words searched for linked list is "+llSet.size());
+		System.out.println("Number of words searched for tree is "+treeSet.size());
+		System.out.println("Number of words searched for hash table is "+hashSet.size());
+		//System.out.println(mytable.length);
+	}
+
+}
+
+
+class AvlTree<AnyType extends Comparable<? super AnyType>>
+{
+	public AvlTree( )
+	{
+		root = null;
+	}
+
+	public void insert( AnyType x )
+	{
+		root = insert( x, root );
+	}
+
+	public void remove( AnyType x )
+	{
+		root = remove( x, root );
+	}
+
+	private AvlNode<AnyType> remove( AnyType x, AvlNode<AnyType> t )
+	{
+		if( t == null )
+			return t;   // Item not found; do nothing
+
+		int compareResult = x.compareTo( t.element );
+
+		if( compareResult < 0 )
+			t.left = remove( x, t.left );
+		else if( compareResult > 0 )
+			t.right = remove( x, t.right );
+		else if( t.left != null && t.right != null ) // Two children
+		{
+			t.element = findMin( t.right ).element;
+			t.right = remove( t.element, t.right );
+		}
+		else
+			t = ( t.left != null ) ? t.left : t.right;
+		return balance( t );
+	}
+
+	public void makeEmpty( )
+	{
+		root = null;
+	}
+
+	public boolean isEmpty( )
+	{
+		return root == null;
+	}
+
+	public void printTree( )
+	{
+		if( isEmpty( ) )
+			System.out.println( "Empty tree" );
+		else
+			printTree( root );
+	}
+
+	private static final int ALLOWED_IMBALANCE = 1;
+
+	// Assume t is either balanced or within one of being balanced
+	private AvlNode<AnyType> balance( AvlNode<AnyType> t )
+	{
+		if( t == null )
+			return t;
+
+		if( height( t.left ) - height( t.right ) > ALLOWED_IMBALANCE )
+			if( height( t.left.left ) >= height( t.left.right ) )
+				t = rotateWithLeftChild( t );
+			else
+				t = doubleWithLeftChild( t );
+		else
+			if( height( t.right ) - height( t.left ) > ALLOWED_IMBALANCE )
+				if( height( t.right.right ) >= height( t.right.left ) )
+					t = rotateWithRightChild( t );
+				else
+					t = doubleWithRightChild( t );
+
+		t.height = Math.max( height( t.left ), height( t.right ) ) + 1;
+		return t;
+	}
+
+	public void checkBalance( )
+	{
+		checkBalance( root );
+	}
+
+	private int checkBalance( AvlNode<AnyType> t )
+	{
+		if( t == null )
+			return -1;
+
+		if( t != null )
+		{
+			int hl = checkBalance( t.left );
+			int hr = checkBalance( t.right );
+			if( Math.abs( height( t.left ) - height( t.right ) ) > 1 ||
+					height( t.left ) != hl || height( t.right ) != hr )
+				System.out.println( "OOPS!!" );
+		}
+
+		return height( t );
+	}
+
+	private AvlNode<AnyType> insert( AnyType x, AvlNode<AnyType> t )
+	{
+		if( t == null )
+			return new AvlNode<>( x, null, null );
+
+		int compareResult = x.compareTo( t.element );
+
+		if( compareResult < 0 )
+			t.left = insert( x, t.left );
+		else if( compareResult > 0 )
+			t.right = insert( x, t.right );
+		else
+			;  // Duplicate; do nothing
+		return balance( t );
+	}
+
+	private AvlNode<AnyType> findMin( AvlNode<AnyType> t )
+	{
+		if( t == null )
+			return t;
+
+		while( t.left != null )
+			t = t.left;
+		return t;
+	}
+	public boolean contains( AnyType x )
+	{
+		sumHeights(root);
+		return contains( x, root );
+	}
+
+	private AvlNode<AnyType> findMax( AvlNode<AnyType> t )
+	{
+		if( t == null )
+			return t;
+
+		while( t.right != null )
+			t = t.right;
+		return t;
+	}
+
+	private boolean contains( AnyType x, AvlNode<AnyType> t )
+	{
+		while( t != null )
+		{
+			int compareResult = x.compareTo( t.element );
+			if( compareResult < 0 )
+				t = t.left;
+			else if( compareResult > 0 )
+				t = t.right;
+			else
+				return true;    // Match
+		}
+		//To sum the heights,remove
+		//sumHeights(t);
+		return false;   // No match
+	}
+
+	private BigInteger sumHeights(AvlNode<AnyType> t) {
+		if(t!=null){
+			BigInteger b=new BigInteger(t.height+"");
+			return b.add(sumHeights(t.left));
+		}
+		return BigInteger.ZERO;
+	}
+
+	private void printTree( AvlNode<AnyType> t )
+	{
+		if( t != null )
+		{
+			printTree( t.left );
+			System.out.println( t.element );
+			printTree( t.right );
+		}
+	}
+
+	private int height( AvlNode<AnyType> t )
+	{
+		return t == null ? -1 : t.height;
+	}
+
+	private AvlNode<AnyType> rotateWithLeftChild( AvlNode<AnyType> k2 )
+	{
+		AvlNode<AnyType> k1 = k2.left;
+		k2.left = k1.right;
+		k1.right = k2;
+		k2.height = Math.max( height( k2.left ), height( k2.right ) ) + 1;
+		k1.height = Math.max( height( k1.left ), k2.height ) + 1;
+		return k1;
+	}
+
+	private AvlNode<AnyType> rotateWithRightChild( AvlNode<AnyType> k1 )
+	{
+		AvlNode<AnyType> k2 = k1.right;
+		k1.right = k2.left;
+		k2.left = k1;
+		k1.height = Math.max( height( k1.left ), height( k1.right ) ) + 1;
+		k2.height = Math.max( height( k2.right ), k1.height ) + 1;
+		return k2;
+	}
+
+	private AvlNode<AnyType> doubleWithLeftChild( AvlNode<AnyType> k3 )
+	{
+		k3.left = rotateWithRightChild( k3.left );
+		return rotateWithLeftChild( k3 );
+	}
+
+	private AvlNode<AnyType> doubleWithRightChild( AvlNode<AnyType> k1 )
+	{
+		k1.right = rotateWithLeftChild( k1.right );
+		return rotateWithRightChild( k1 );
+	}
+
+	private static class AvlNode<AnyType>
+	{
+		// Constructors
+		AvlNode( AnyType theElement )
+		{
+			this( theElement, null, null );
+		}
+
+		AvlNode( AnyType theElement, AvlNode<AnyType> lt, AvlNode<AnyType> rt )
+		{
+			element  = theElement;
+			left     = lt;
+			right    = rt;
+			height   = 0;
+		}
+
+		AnyType           element;      // The data in the node
+		AvlNode<AnyType>  left;         // Left child
+		AvlNode<AnyType>  right;        // Right child
+		int               height;       // Height
+	}
+
+	private AvlNode<AnyType> root;
+}

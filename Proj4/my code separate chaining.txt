@@ -1,0 +1,678 @@
+package proj4;
+import java.io.*;
+import java.util.*;
+import proj4.avltreemethods.AvlNode;
+
+public class threeways {
+	static HashSet<String> llSet=new HashSet<>();
+	static HashSet<String> treeSet=new HashSet<>();
+	static HashSet<String> hashSet=new HashSet<>();
+	public static void main(String[] args) throws IOException {
+
+		Random r=new Random();
+		int row=16,col=16;
+		char charTable[][]=new char[row][col];
+		for (int i = 0; i < row; i++) {
+			for (int j = 0; j < col; j++) {
+				charTable[i][j]=(char)(r.nextInt(26)+'a');
+			}
+		}
+
+		for (int i = 0; i < charTable.length; i++) {
+			System.out.println(Arrays.toString(charTable[i]));
+		}	
+
+		String line = null;
+		String fileName = "C:/Users/Sreevatsa H V/Desktop/dictionary%281%29.txt";
+		LinkedList<String> Mylinked=new LinkedList<String>();
+		avltreemethods<String> t = new avltreemethods<>( );
+		ArrayList<String> mytable[]=new ArrayList[100000];
+		int maxlength=0;
+		try {
+			FileReader file=new FileReader(fileName);
+			BufferedReader bufferedReader = new BufferedReader(file);
+
+			while((line = bufferedReader.readLine()) != null) 
+			{
+				if(line.length()>maxlength)
+				{
+					maxlength=line.length();
+				}
+				ArrayList<String> list=mytable[myHashFunc(line,mytable.length)];
+				Mylinked.add(line);	 
+				t.insert(line);
+				if(mytable[myHashFunc(line,mytable.length)]==null)
+				{
+					mytable[myHashFunc(line,mytable.length)]=new ArrayList();
+					mytable[myHashFunc(line,mytable.length)].add(line);
+				}
+				else
+				{
+					if(mytable[myHashFunc(line,mytable.length)].indexOf(line)==-1)
+						mytable[myHashFunc(line,mytable.length)].add(line);
+				}
+			} 
+			bufferedReader.close(); 
+		}
+
+		catch (FileNotFoundException e){
+			e.printStackTrace();
+		}
+		System.out.println(maxlength);
+
+
+		//		// for linked list 
+
+		Long start = System.currentTimeMillis( );
+		for (int i = 0; i < charTable.length; i++) 
+		{
+			for (int j = 0; j < charTable[i].length; j++) {
+				//get the (i,j)character
+				StringBuilder sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal right
+				if(charTable[i].length<maxlength)
+					maxlength=charTable[i].length;
+
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+					if(j+j2+1<charTable[i].length)
+						sb.append(charTable[i][j+j2+1]);
+					else
+						break;
+
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(j-j2-1>=0)
+						sb.append(charTable[i][j-j2-1]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+
+					//					if(j-j2-1>=0)
+					//					sb.append(charTable[i][j-j2-1]);
+					//					else
+					//						break;
+
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical upper
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0)
+						sb.append(charTable[i-j2-1][j]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+
+					//					if(i-j2-1>=0)
+					//					sb.append(charTable[i-j2-1][j]);
+					//					else
+					//						break;
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical lower
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length)
+						sb.append(charTable[i+j2+1][j]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+
+					//					if(i+j2+1<charTable.length)
+					//					sb.append(charTable[i+j2+1][j]);
+					//					else
+					//						break;
+
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j-j2-1>=0 )
+						sb.append(charTable[i-j2-1][j-j2-1]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+
+					//					if(i-j2-1>=0 && j-j2-1>=0 )
+					//					sb.append(charTable[i-j2-1][j-j2-1]);
+					//					else
+					//						break;
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+						sb.append(charTable[i-j2-1][j+j2+1]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+						}
+
+					//					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+					//					sb.append(charTable[i-j2-1][j+j2+1]);
+					//					else
+					//						break;
+
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j-j2-1>=0 )
+						sb.append(charTable[i+j2+1][j-j2-1]);
+					else
+						break;
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+
+					//					if(i+j2+1<charTable.length && j-j2-1>=0 )
+					//					sb.append(charTable[i+j2+1][j-j2-1]);
+					//					else
+					//						break;
+
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+						sb.append(charTable[i+j2+1][j+j2+1]);
+					else
+						break;
+
+					if(Mylinked.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						llSet.add(sb.toString());
+					}
+
+					//					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+					//					sb.append(charTable[i+j2+1][j+j2+1]);
+					//					else
+					//						break;
+				}
+			}
+		}
+		Long end = System.currentTimeMillis( );
+		System.out.println( "Elapsed time for linked list: " + (end-start) );
+
+
+
+
+		// for trees
+
+
+		Long start1 = System.currentTimeMillis( );
+		for (int i = 0; i < charTable.length; i++) 
+		{
+			for (int j = 0; j < charTable[i].length; j++) {
+				//get the (i,j)character
+				StringBuilder sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal right
+				if(charTable[i].length<maxlength)
+					maxlength=charTable[i].length;
+
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+
+					if(j+j2+1<charTable[i].length)
+						sb.append(charTable[i][j+j2+1]);
+					else
+						break;
+
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(j-j2-1>=0)
+						sb.append(charTable[i][j-j2-1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+					//					if(j-j2-1>=0)
+					//					sb.append(charTable[i][j-j2-1]);
+					//					else
+					//						break;
+
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical upper
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0)
+						sb.append(charTable[i-j2-1][j]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+					//					if(i-j2-1>=0)
+					//					sb.append(charTable[i-j2-1][j]);
+					//					else
+					//						break;
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical lower
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length)
+						sb.append(charTable[i+j2+1][j]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+					//					if(i+j2+1<charTable.length)
+					//					sb.append(charTable[i+j2+1][j]);
+					//					else
+					//						break;
+
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j-j2-1>=0 )
+						sb.append(charTable[i-j2-1][j-j2-1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+					//					if(i-j2-1>=0 && j-j2-1>=0 )
+					//					sb.append(charTable[i-j2-1][j-j2-1]);
+					//					else
+					//						break;
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+						sb.append(charTable[i-j2-1][j+j2+1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+					//					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+					//					sb.append(charTable[i-j2-1][j+j2+1]);
+					//					else
+					//						break;
+
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j-j2-1>=0 )
+						sb.append(charTable[i+j2+1][j-j2-1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+					//					if(i+j2+1<charTable.length && j-j2-1>=0 )
+					//					sb.append(charTable[i+j2+1][j-j2-1]);
+					//					else
+					//						break;
+
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+						sb.append(charTable[i+j2+1][j+j2+1]);
+					else
+						break;
+
+					if(t.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");
+						treeSet.add(sb.toString());
+					}
+
+					//					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+					//					sb.append(charTable[i+j2+1][j+j2+1]);
+					//					else
+					//						break;
+				}
+			}
+		}
+		Long end1 = System.currentTimeMillis( );
+		System.out.println( "Elapsed time for tree structure is: " + (end1-start1) );
+
+
+
+
+
+
+
+
+		// for hash table part
+
+		Long start2 = System.currentTimeMillis( );
+		for (int i = 0; i < charTable.length; i++) 
+		{
+			for (int j = 0; j < charTable[i].length; j++) {
+				StringBuilder sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal right
+				if(charTable[i].length<maxlength)
+					maxlength=charTable[i].length;
+
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					ArrayList<String> list=mytable[myHashFunc(sb.toString(),mytable.length)];
+				
+					if(list!=null && list.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+					if(j+j2+1<charTable[i].length)
+						sb.append(charTable[i][j+j2+1]);
+					else
+						break;
+
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for horizontal left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(j-j2-1>=0)
+						sb.append(charTable[i][j-j2-1]);
+					else
+						break;
+
+					ArrayList<String> list=mytable[myHashFunc(sb.toString(),mytable.length)];
+					
+					if(list!=null && list.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+					//					if(j-j2-1>=0)
+					//					sb.append(charTable[i][j-j2-1]);
+					//					else
+					//						break;
+
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical upper
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0)
+						sb.append(charTable[i-j2-1][j]);
+					else
+						break;
+
+					ArrayList<String> list=mytable[myHashFunc(sb.toString(),mytable.length)];
+					
+					if(list!=null && list.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+					//					if(i-j2-1>=0)
+					//					sb.append(charTable[i-j2-1][j]);
+					//					else
+					//						break;
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for vertical lower
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length)
+						sb.append(charTable[i+j2+1][j]);
+					else
+						break;
+
+					ArrayList<String> list=mytable[myHashFunc(sb.toString(),mytable.length)];
+					
+					if(list!=null && list.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+//					if(i+j2+1<charTable.length)
+//						sb.append(charTable[i+j2+1][j]);
+//					else
+//						break;
+
+				}
+
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j-j2-1>=0 )
+						sb.append(charTable[i-j2-1][j-j2-1]);
+					else
+						break;
+
+					ArrayList<String> list=mytable[myHashFunc(sb.toString(),mytable.length)];
+					
+					if(list!=null && list.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+//					if(i-j2-1>=0 && j-j2-1>=0 )
+//						sb.append(charTable[i-j2-1][j-j2-1]);
+//					else
+//						break;
+				}
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag upper right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+						sb.append(charTable[i-j2-1][j+j2+1]);
+					else
+						break;
+
+					ArrayList<String> list=mytable[myHashFunc(sb.toString(),mytable.length)];
+					
+					if(list!=null && list.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+					//					if(i-j2-1>=0 && j+j2+1<charTable[i].length )
+					//					sb.append(charTable[i-j2-1][j+j2+1]);
+					//					else
+					//						break;
+
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower left
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j-j2-1>=0 )
+						sb.append(charTable[i+j2+1][j-j2-1]);
+					else
+						break;
+
+					ArrayList<String> list=mytable[myHashFunc(sb.toString(),mytable.length)];
+					
+					if(list!=null && list.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+					//					if(i+j2+1<charTable.length && j-j2-1>=0 )
+					//					sb.append(charTable[i+j2+1][j-j2-1]);
+					//					else
+					//						break;
+
+				}
+				//				
+				sb=new StringBuilder();
+				sb.append(charTable[i][j]);
+
+				//for diag lower right
+				for (int j2 = 0; j2 < maxlength; j2++) {
+
+					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+						sb.append(charTable[i+j2+1][j+j2+1]);
+					else
+						break;
+
+					ArrayList<String> list=mytable[myHashFunc(sb.toString(),mytable.length)];
+					
+					if(list!=null && list.contains(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+					}
+
+					//					if(i+j2+1<charTable.length && j+j2+1<charTable[i].length )
+					//					sb.append(charTable[i+j2+1][j+j2+1]);
+					//					else
+					//						break;
+				}
+			}
+		}
+		Long end2 = System.currentTimeMillis( );
+		System.out.println( "Elapsed time for hash table is: " + (end2-start2) );
+		
+		
+		System.out.println(llSet.size());
+		System.out.println(treeSet.size());
+		System.out.println(hashSet.size());
+		
+	}
+
+	private static int myHashFunc(String key, int size){
+		if(key.length()==1)
+		{
+			return (key.charAt(0)*11)%size;
+		}
+		else if(key.length()==2)
+		{
+			return (key.charAt(0)*11+key.charAt(1)*13)%size;
+		}
+		else if(key.length()==3)
+		{
+			return(key.charAt(0)*11+key.charAt(1)*13+key.charAt(2)*17)%size;
+		}
+		else
+		{
+			return(key.charAt(0)*11+key.charAt(1)*13+(key.charAt(key.length()-1)*17)+(key.charAt(key.length()-2)*19))%size;
+		}
+	}
+}

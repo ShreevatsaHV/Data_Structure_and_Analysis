@@ -1,0 +1,49 @@
+if(mytable[list]==null)
+						break;
+					
+					if(mytable[list]!=null && mytable[list].equals(sb.toString())){
+						System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+						hashSet.add(sb.toString());
+						break;
+					}
+					
+					else
+					{
+						int flag=0;
+						for(int l=1;l<mytable.length/4;i++)
+						{							
+							if((list+(l^2))<mytable.length)
+							{
+								if(mytable[list+(l^2)]==null || (list+(l^2))==list)
+								{
+									flag=1;
+									break;
+								}
+							if(mytable[list+(l^2)]!=null && mytable[list+(l^2)].equals(sb.toString()))
+							{
+								System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+								hashSet.add(sb.toString());
+								flag=1;
+								break;
+							}
+					     }
+							else
+							{
+								int newp=((list+(l^2))%mytable.length);
+								if(mytable[newp]==null || newp==list)
+								{
+									flag=1;
+									break;
+								}
+								if(mytable[newp]!=null && mytable[newp].equals(sb.toString()))
+								{
+									System.out.println(sb.toString() + " is present in "+(i+1)+" row");	
+									hashSet.add(sb.toString());
+									flag=1;
+									break;
+								}
+							}
+					}
+						if(flag==1)
+							break;
+				}
